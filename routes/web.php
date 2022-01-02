@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -17,3 +18,11 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('Welcome');
 });
+
+Route::get('home', function () {
+    return 'home';
+})->name('home');
+
+
+Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
+Route::post('login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
