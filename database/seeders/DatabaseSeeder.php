@@ -2,7 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\GiftEvent;
+use App\Models\Participant;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,6 +18,40 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        for ($i = 0; $i <= 20; $i++) {
+            User::create([
+                'name' => 'koko'.$i,
+                'login' => 'koko'.$i,
+                'org_id' => 1000 + $i,
+                'full_name' => 'koko momo '.$i,
+                'password' => Hash::make('secret'),
+            ]);
+        }
+
+        $party = new GiftEvent();
+        $party->user_id = User::first()->id;
+        $party->title = 'new year party!!';
+        $party->slug = Str::uuid()->toString();
+        $party->save();
+
+        $group = $party->participantGroups()->create([
+                    'title' => 'team a',
+                    'quota' => 3,
+                ]);
+
+        $group->syncParticipants([1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 10010]);
+
+        $group = $party->participantGroups()->create([
+                    'title' => 'team b',
+                    'quota' => 3,
+                ]);
+
+        $group->syncParticipants([1011, 1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019, 1020]);
+
+        $party->gifts()->createMany([
+            ['title' => '300USD', 'quantity' => 1, 'remain' => 1],
+            ['title' => '200USD', 'quantity' => 2, 'remain' => 2],
+            ['title' => '100USD', 'quantity' => 3, 'remain' => 3],
+        ]);
     }
 }

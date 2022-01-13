@@ -15,6 +15,10 @@ class CreateGiftsTable extends Migration
     {
         Schema::create('gifts', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->unsignedMediumInteger('quantity')->default(1);
+            $table->unsignedMediumInteger('remain')->default(1);
+            $table->foreignId('gift_event_id')->constrained('gift_events')->onDelete('cascade');
             $table->timestamps();
         });
     }

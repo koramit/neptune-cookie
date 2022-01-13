@@ -17,6 +17,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('login')->unique();
+            $table->unsignedInteger('org_id')->unique();
             $table->string('full_name')->unique();
             $table->string('home_page')->default('home');
             $table->string('password');
