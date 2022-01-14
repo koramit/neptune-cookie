@@ -26,6 +26,68 @@ class GiftEvent extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class)->withPivot('gift_id', 'number')->as('label')->withTimestamps();
+        return $this->belongsToMany(User::class)
+                    ->withPivot('gift_title', 'label_number')
+                    ->as('label')
+                    ->withTimestamps();
+    }
+
+    public function getParticipantGroupByUserOrgId($id)
+    {
+        return $this->participantGroups()
+                    ->whereHas('participants', fn ($q) => $q->whereId($id))
+                    ->first();
+    }
+
+    public function drawForUser($user, $labelNumber)
+    {
+        // group gift remain
+        $group = $this->getParticipantGroupByUserOrgId($user->org_id);
+        if (!$group || $group->gift_remain == 0) {
+            return $this->no_luck_label; // no luck;
+        }
+
+        // check available gifts
+        $availableGifts = Gift::whereHas('giftEvent', fn ($q) => $q->whereId($this->id))->where('quantity', '<>', 0)->get();
+        if (empty($availableGifts)) {
+            return $this->no_luck_label; // no luck;
+        }
+
+        // group participants remian
+        $drewCount = User::whereHas('giftEvents', fn ($q) => $q->whereId($this->id))
+                        ->whereIn('org_id', $group->participants()->select('id')->pluck('id'))
+                        ->count();
+        $participantRemain = $group->participants()->count() - $drewCount;
+
+        // generate and shuffle labels
+        $shuffled = collect(array_merge(array_fill(0, $group->gift_remain, 'gift'), array_fill(0, $participantRemain - $group->gift_remain, 'empty')))->shuffle();
+        $drawLabel = $shuffled[$labelNumber % $shuffled->count()];
+        if ($drawLabel === 'empty') {
+            return $this->no_luck_label; // no luck
+        }
+
+        // recheck available gifts and random
+        $group = $this->getParticipantGroupByUserOrgId($user->org_id);
+        if ($group->gift_remain == 0) {
+            return $this->no_luck_label; // no luck;
+        }
+
+        $availableGifts = Gift::whereHas('giftEvent', fn ($q) => $q->whereId($this->id))->where('quantity', '<>', 0)->get();
+        if (empty($availableGifts)) {
+            return $this->no_luck_label; // no luck;
+        }
+
+        $giftLabels = [];
+        foreach ($availableGifts as $gift) {
+            $giftLabels = array_merge($giftLabels, array_fill(0, $gift->remain, $gift->id));
+        }
+        $shuffled = collect($giftLabels)->shuffle();
+        $drawGift = $shuffled[$labelNumber % $shuffled->count()];
+        $drawGift = Gift::find($drawGift);
+        $drawGift->update(['remain' => $drawGift->remain - 1]);
+        $group->gift_remain = $group->gift_remain - 1;
+        $group->save();
+
+        return $drawGift->title;
     }
 }

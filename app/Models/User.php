@@ -47,7 +47,10 @@ class User extends Authenticatable
 
     public function giftEvents()
     {
-        return $this->belongsToMany(GiftEvent::class)->withPivot('gift_id', 'number')->as('label')->withTimestamps();
+        return $this->belongsToMany(GiftEvent::class)
+                    ->withPivot('gift_title', 'label_number')
+                    ->as('label')
+                    ->withTimestamps();
     }
 
     /**

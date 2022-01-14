@@ -20,7 +20,7 @@ class CreateGiftEventsTable extends Migration
             $table->tinyText('description')->nullable();
             $table->unsignedTinyInteger('method')->default(1); // by participants, by VIP, by program
             $table->unsignedTinyInteger('status')->default(1); // planning, live, ended
-            $table->string('no_luck_label')->nullable();
+            $table->string('no_luck_label')->default('ไม่มีตังค์ค่ะ');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // organizer
             $table->timestamps();
         });
@@ -29,8 +29,8 @@ class CreateGiftEventsTable extends Migration
             $table->primary(['gift_event_id', 'user_id']);
             $table->unsignedSmallInteger('gift_event_id')->constrained('gift_events')->onDelete('cascade');
             $table->unsignedSmallInteger('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('gift_id')->constrained('gifts')->onDelete('cascade');
-            $table->unsignedSmallInteger('number')->nullable();
+            $table->string('gift_title');
+            $table->unsignedSmallInteger('label_number');
             $table->timestamps();
         });
     }

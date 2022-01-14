@@ -16,7 +16,8 @@ class CreateParticipantGroupsTable extends Migration
         Schema::create('participant_groups', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->unsignedMediumInteger('quota');
+            $table->unsignedMediumInteger('gift_quota');
+            $table->unsignedMediumInteger('gift_remain');
             $table->foreignId('gift_event_id')->constrained('gift_events')->onDelete('cascade');
             $table->timestamps();
         });
