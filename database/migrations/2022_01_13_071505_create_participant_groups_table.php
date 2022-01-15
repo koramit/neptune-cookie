@@ -24,8 +24,8 @@ class CreateParticipantGroupsTable extends Migration
 
         Schema::create('participant_participant_group', function (Blueprint $table) {
             $table->primary(['participant_id', 'participant_group_id']);
-            $table->unsignedInteger('participant_id')->constrained('participants')->onDelete('cascade');
-            $table->unsignedBigInteger('participant_group_id')->constrained('participant_groups')->onDelete('cascade');
+            $table->unsignedInteger('participant_id')->constrained('participants');
+            $table->unsignedBigInteger('participant_group_id')->constrained('participant_groups');
             $table->timestamps();
         });
     }

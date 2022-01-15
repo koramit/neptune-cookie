@@ -9,6 +9,11 @@ class ParticipantGroup extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'title',
+        'gift_quota',
+        'gift_remain'
+    ];
 
     public function giftEvent()
     {

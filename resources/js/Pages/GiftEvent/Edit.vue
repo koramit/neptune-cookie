@@ -14,7 +14,8 @@
         </h2>
         <button
             class="mt-4 border border-yellow-400 bg-yellow-200 py-2 px-4 text-center text-yellow-500"
-            @click="addGroup"
+            :disabled="form.process"
+            @click="update"
         >
             บันทึก
         </button>
@@ -45,7 +46,8 @@
                     class="inline-block w-full border-2 border-green-300 outline-none focus:border-green-500 px-2 py-1"
                     id="eventDatetimeStart"
                     name="eventDatetimeStart"
-                    type="datetime-local"
+                    type="text"
+                    placeholder="ใช้ปี คศ ตัวอย่าง 2022-01-01 11:11"
                     v-model="form.datetime_start"
                 >
             </div>
@@ -62,7 +64,7 @@
             </div>
 
             <div class="mt-4">
-                <label for="vips">ID แขกกิตติมศักดิ์ ({{ form.vips ? form.vips.split(' ').length : 0 }}) : </label>
+                <label for="vips">แขกกิตติมศักดิ์ ({{ form.vips ? form.vips.split(' ').length : 0 }}) : </label>
                 <input
                     class="inline-block w-full border-2 border-green-300 outline-none focus:border-green-500 px-2 py-1"
                     id="vips"
@@ -167,7 +169,7 @@
             </div>
             <button
                 class="mt-4 border border-red-500 bg-red-300 py-2 px-4 text-center text-red-600"
-                @click="groups.splice(key, 1)"
+                @click="removeGroup(key)"
             >
                 ลบกลุ่ม
             </button>
@@ -214,7 +216,7 @@
             </div>
             <button
                 class="mt-4 border border-red-500 bg-red-300 py-2 px-4 text-center text-red-600"
-                @click="gifts.splice(key, 1)"
+                @click="removeGift(key)"
             >
                 ลบรางวัล
             </button>
@@ -232,19 +234,38 @@ const props = defineProps({
 });
 
 const form = useForm({...props.giftEvent});
+const update = () => {
+    form.patch(`/gift-events/${form.slug}`);
+};
 
 const addGroup = () => {
-    form.groups.push({
-        id: null,
-        title: null,
-        gift_quota: 1,
-        participants: null
-    });
-    nextTick(() => {
-        let input = document.getElementById(`groupTitle-${form.groups.length - 1}`);
-        input.focus();
-        input.scrollIntoView();
-    });
+    window.axios
+        .post(`/gift-events/${form.slug}/participant-groups`)
+        .then(response => {
+            form.groups.push({
+                id: response.data.id,
+                title: response.data.title,
+                gift_quota: response.data.gift_quota,
+                participants: null
+            });
+            nextTick(() => {
+                let input = document.getElementById(`groupTitle-${form.groups.length - 1}`);
+                input.focus();
+                input.scrollIntoView();
+            });
+        })
+        .catch(error => console.log(error));
+};
+const removeGroup = (key) => {
+    window.axios
+        .delete(`/gift-events/${form.slug}/participant-groups/${form.groups[key].id}`)
+        .then(response => {
+            if (!response.data.ok) {
+                return;
+            }
+            form.groups.splice(key, 1);
+        })
+        .catch(error => console.log(error));
 };
 const participantCount = computed(() => {
     if (!form.groups.length) {
@@ -254,16 +275,32 @@ const participantCount = computed(() => {
 });
 
 const addGift = () => {
-    form.gifts.push({
-        id: null,
-        title: null,
-        quantity: 1
-    });
-    nextTick(() => {
-        let input = document.getElementById(`giftTitle-${form.gifts.length - 1}`);
-        input.focus();
-        input.scrollIntoView();
-    });
+    window.axios
+        .post(`/gift-events/${form.slug}/gifts`)
+        .then(response => {
+            form.gifts.push({
+                id: response.data.id,
+                title: response.data.title,
+                quantity: response.data.quantity,
+            });
+            nextTick(() => {
+                let input = document.getElementById(`giftTitle-${form.gifts.length - 1}`);
+                input.focus();
+                input.scrollIntoView();
+            });
+        })
+        .catch(error => console.log(error));
+};
+const removeGift = (key) => {
+    window.axios
+        .delete(`/gift-events/${form.slug}/gifts/${form.gifts[key].id}`)
+        .then(response => {
+            if (!response.data.ok) {
+                return;
+            }
+            form.gifts.splice(key, 1);
+        })
+        .catch(error => console.log(error));
 };
 const giftCount = computed(() => {
     if (!form.gifts.length) {
