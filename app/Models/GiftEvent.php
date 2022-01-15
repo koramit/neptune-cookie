@@ -84,9 +84,8 @@ class GiftEvent extends Model
         $shuffled = collect($giftLabels)->shuffle();
         $drawGift = $shuffled[$labelNumber % $shuffled->count()];
         $drawGift = Gift::find($drawGift);
-        $drawGift->update(['remain' => $drawGift->remain - 1]);
-        $group->gift_remain = $group->gift_remain - 1;
-        $group->save();
+        $drawGift->decrement('remain');
+        $group->decrement('gift_remain');
 
         return $drawGift->title;
     }
