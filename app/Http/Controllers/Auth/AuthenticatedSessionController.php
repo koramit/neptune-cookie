@@ -33,23 +33,21 @@ class AuthenticatedSessionController extends Controller
             'password' => 'required|string',
         ]);
 
-        // if (config('auth.guards.web.provider') === 'avatars') {
-        //     return $this->storeAvatarUser();
+        $user = User::whereLogin(Request::input('login'))->first();
+
+        // $api = new SubHannahAPI;
+
+        // $data = $api->authenticate(Request::input('login'), Request::input('password'));
+
+        // if (! $data['found']) {
+        //     return back()->withErrors([
+        //         'login' => $data['message'],
+        //     ]);
         // }
 
-        $api = new SubHannahAPI;
-
-        $data = $api->authenticate(Request::input('login'), Request::input('password'));
-
-        if (! $data['found']) {
-            return back()->withErrors([
-                'login' => $data['message'],
-            ]);
-        }
-
-        if (! $user = User::whereLogin(Request::input('login'))->first()) {
-            $user = $this->autoRegister($data);
-        }
+        // if (! $user = User::whereLogin(Request::input('login'))->first()) {
+        //     $user = $this->autoRegister($data);
+        // }
 
         Auth::login($user);
 
@@ -95,10 +93,9 @@ class AuthenticatedSessionController extends Controller
             'name' => $data['username'],
             'login' => $data['username'],
             'full_name' => $data['name'],
+            'org_id' => $data['org_id'],
             'password' => Hash::make(Str::random(64)),
         ]);
-
-        // \Log::info($user);
 
         return User::find($user->id);
     }

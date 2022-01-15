@@ -23,6 +23,10 @@ Route::get('home', function () {
     return 'home';
 })->name('home');
 
+Route::get('edit', function () {
+    return Inertia::render('GiftEvent/Edit');
+})->name('giftEvents.edit');
+
 
 Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
 Route::post('login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
