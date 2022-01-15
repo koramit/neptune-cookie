@@ -13,4 +13,9 @@ class Participant extends Model
     {
         return $this->belongsToMany(ParticipantGroup::class)->withTimestamps();
     }
+
+    public function giftEvents()
+    {
+        return $this->belongsToMany(GiftEvent::class)->withTimestamps();
+    }
 }

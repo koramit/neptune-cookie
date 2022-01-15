@@ -32,6 +32,25 @@ class GiftEvent extends Model
                     ->withTimestamps();
     }
 
+    public function vips()
+    {
+        return $this->belongsToMany(Participant::class)->withTimestamps();
+    }
+
+    public function syncVIPs(array $ids)
+    {
+        $timestamps = ['created_at' => now(), 'updated_at' => now()];
+        $newParticipant = collect($ids)
+                            ->diff(
+                                Participant::whereIn('id', $ids)
+                                            ->get()
+                                            ->pluck(['id'])
+                            )->map(fn ($p) => ['id' => $p] + $timestamps)
+                            ->toArray();
+        Participant::insert($newParticipant);
+        $this->vips()->sync($ids);
+    }
+
     public function getParticipantGroupByUserOrgId($id)
     {
         return $this->participantGroups()
