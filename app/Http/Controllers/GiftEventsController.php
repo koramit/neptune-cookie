@@ -51,6 +51,7 @@ class GiftEventsController extends Controller
                     'title' => $g->title,
                     'quantity' => $g->quantity,
                 ]),
+                'vips' => $giftEvent->vips->map(fn ($p) => $p->id)->join(' ')
             ]
         ]);
     }

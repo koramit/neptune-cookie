@@ -60,6 +60,29 @@
                     disabled
                 >
             </div>
+
+            <div class="mt-4">
+                <label for="vips">ID แขกกิตติมศักดิ์ ({{ form.vips ? form.vips.split(' ').length : 0 }}) : </label>
+                <input
+                    class="inline-block w-full border-2 border-green-300 outline-none focus:border-green-500 px-2 py-1"
+                    id="vips"
+                    name="vips"
+                    type="text"
+                    placeholder="copy SAP ID จาก excel มาใส่ช่องนี้"
+                    v-model="form.vips"
+                >
+            </div>
+            <div
+                class="mt-2 grid grid-cols-2 md:grid-cols-5 gap-4"
+                v-if="form.vips"
+            >
+                <span
+                    class="inline-block px-4 py-2 bg-green-200 rounded-3xl text-center text-green-600"
+                    v-for="id in form.vips.split(' ')"
+                    :key="id"
+                >{{ id }}</span>
+            </div>
+
             <div class="mt-4 md:grid grid-cols-2 gap-4">
                 <div>
                     <label for="eventParticipants">จำนวนผู้ร่วมงานทั้งหมด (จาก {{ form.groups.length }} กลุ่ม) : </label>
