@@ -11,6 +11,13 @@
     <script src="{{ asset(mix('/js/app.js')) }}" defer></script>
 </head>
 <body class="bg-yellow-100 font-nirimit font-extralight text-gray-700 p-4 md:px-16 md:py-6 lg:px-24">
+    @auth
+    <form action="/logout" method="POST">
+        @csrf
+        @method('delete')
+        <input class="text-gray-400 underline cursor-pointer" type="submit" value="ออกจากระบบ">
+    </form>
+    @endauth
     @inertia
 </body>
 </html>

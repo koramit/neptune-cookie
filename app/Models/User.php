@@ -53,6 +53,11 @@ class User extends Authenticatable
                     ->withTimestamps();
     }
 
+    public function myGiftEvents()
+    {
+        return $this->hasMany(GiftEvent::class);
+    }
+
     /**
      * A user may be assigned many roles.
      *
