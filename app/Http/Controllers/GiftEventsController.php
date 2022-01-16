@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Gift;
 use App\Models\GiftEvent;
+use App\Models\Participant;
 use App\Models\ParticipantGroup;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -47,7 +48,7 @@ class GiftEventsController extends Controller
                 'slug' => $giftEvent->slug,
                 'title' => $giftEvent->title,
                 'no_luck_label' => $giftEvent->no_luck_label,
-                'datetime_start' => $giftEvent->datetime_start,
+                'datetime_start' => $giftEvent->datetime_start?->format('Y-m-d H:i'),
                 'groups' => $giftEvent->participantGroups()->with('participants')->get()->transform(fn ($g) => [
                     'id' => $g->id,
                     'title' => $g->title,
@@ -120,5 +121,38 @@ class GiftEventsController extends Controller
 
 
         return Redirect::route('home');
+    }
+
+    public function show(GiftEvent $giftEvent)
+    {
+        // check invitation if not redirect to notice page
+        // if (!$giftEvent->canAccess(Auth::user())) {
+        //     abort(404);
+        // }
+
+        // check invitation if not redirect to wait page
+        // if (now()->lessThan($giftEvent->datetime_start)) {
+        //     abort(404);
+        // }
+
+        return Inertia::render('GiftEvent/Show', [
+            'giftEvent' => [
+                'slug' => $giftEvent->slug,
+                'title' => $giftEvent->title,
+                'no_luck_label' => $giftEvent->no_luck_label,
+                'participantCount' => Participant::whereHas('participantGroups', fn ($q) => $q->whereIn('id', $giftEvent->participantGroups()->pluck('id')))->count(),
+                'drewLabels' => $giftEvent->users->transform(fn ($u) => [
+                    'name' => $u->login,
+                    'gift' => $u->label['gift_title'],
+                    'number' => $u->label['label_number'],
+                ]),
+                'organizer' => $giftEvent->user_id == Auth::id(),
+                'can' => [
+                    'draw' => $giftEvent->canDraw(Auth::user()),
+                    'start' => $giftEvent->datetime_start->lessThan(now()),
+                    'access' => $giftEvent->canAccess(Auth::user()),
+                ]
+            ]
+        ]);
     }
 }

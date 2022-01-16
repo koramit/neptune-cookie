@@ -9,6 +9,10 @@ class GiftEvent extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'datetime_start' => 'datetime'
+    ];
+
     public function organizer()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
@@ -49,6 +53,28 @@ class GiftEvent extends Model
                             ->toArray();
         Participant::insert($newParticipant);
         $this->vips()->sync($ids);
+    }
+
+    public function canAccess($user)
+    {
+        if ($this->user_id == $user->id) {
+            return true;
+        }
+
+        if ($this->vips()->whereId($user->org_id)->first()) {
+            return true;
+        }
+
+        if ($this->getParticipantGroupByUserOrgId($user->org_id)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function canDraw($user)
+    {
+        return $this->getParticipantGroupByUserOrgId($user->org_id) && !$this->users()->whereId($user->id)->first();
     }
 
     public function getParticipantGroupByUserOrgId($id)

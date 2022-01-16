@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\DrawGiftController;
 use App\Http\Controllers\GiftEventsController;
 use App\Http\Controllers\GiftsController;
 use App\Http\Controllers\ParticipantGroupsController;
@@ -70,3 +71,7 @@ Route::post('gift-events/{giftEvent:slug}/gifts', [GiftsController::class, 'stor
 Route::delete('gift-events/{giftEvent:slug}/gifts/{gift}', [GiftsController::class, 'destroy'])
     ->middleware('auth')
     ->name('participant_groups.destroy');
+
+Route::post('gift-events/{giftEvent:slug}/draw', DrawGiftController::class)
+    ->middleware('auth')
+    ->name('gift_events.draw');

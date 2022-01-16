@@ -33,21 +33,21 @@ class AuthenticatedSessionController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = User::whereLogin(Request::input('login'))->first();
+        // $user = User::whereLogin(Request::input('login'))->first();
 
-        // $api = new SubHannahAPI;
+        $api = new SubHannahAPI;
 
-        // $data = $api->authenticate(Request::input('login'), Request::input('password'));
+        $data = $api->authenticate(Request::input('login'), Request::input('password'));
 
-        // if (! $data['found']) {
-        //     return back()->withErrors([
-        //         'login' => $data['message'],
-        //     ]);
-        // }
+        if (! $data['found']) {
+            return back()->withErrors([
+                'login' => $data['message'],
+            ]);
+        }
 
-        // if (! $user = User::whereLogin(Request::input('login'))->first()) {
-        //     $user = $this->autoRegister($data);
-        // }
+        if (! $user = User::whereLogin(Request::input('login'))->first()) {
+            $user = $this->autoRegister($data);
+        }
 
         Auth::login($user);
 
