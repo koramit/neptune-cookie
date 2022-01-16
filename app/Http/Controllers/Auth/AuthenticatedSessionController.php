@@ -45,7 +45,7 @@ class AuthenticatedSessionController extends Controller
             ]);
         }
 
-        if (! $user = User::whereLogin(Request::input('login'))->first()) {
+        if (! $user = User::whereOrgId($data['org_id'])->first()) {
             $user = $this->autoRegister($data);
         }
 
