@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'login',
         'full_name',
+        'org_id',
         'password',
     ];
 
@@ -43,6 +44,19 @@ class User extends Authenticatable
     protected $casts = [
         // 'email_verified_at' => 'datetime',
     ];
+
+    public function giftEvents()
+    {
+        return $this->belongsToMany(GiftEvent::class)
+                    ->withPivot('gift_title', 'label_number')
+                    ->as('label')
+                    ->withTimestamps();
+    }
+
+    public function myGiftEvents()
+    {
+        return $this->hasMany(GiftEvent::class);
+    }
 
     /**
      * A user may be assigned many roles.
