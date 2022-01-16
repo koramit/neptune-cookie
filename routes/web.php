@@ -5,6 +5,7 @@ use App\Http\Controllers\DrawGiftController;
 use App\Http\Controllers\GiftEventsController;
 use App\Http\Controllers\GiftsController;
 use App\Http\Controllers\ParticipantGroupsController;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -20,7 +21,8 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Welcome');
+    // return Inertia::render('Welcome');
+    return Redirect::route('home');
 });
 
 
