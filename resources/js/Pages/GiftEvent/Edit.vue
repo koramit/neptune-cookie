@@ -5,6 +5,12 @@
     <div class="mt-6 md:mt-12 bg-orange-200 shadow p-4 md:p-8">
         <h2 class="mb-4 py-2 border-b-2 border-green-500 border-dashed text-xl font-medium text-pink-400 flex justify-between items-center">
             <span>ข้อมูลกิจกรรม</span>
+            <a
+                class="text-sm underline text-blue-500"
+                :href="`/gift-events/${giftEvent.slug}/export`"
+            >
+                Export excel
+            </a>
             <Link
                 class="text-sm underline text-blue-500"
                 href="/gift-events"
