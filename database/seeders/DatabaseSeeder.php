@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
         $party->title = 'new year party!!';
         $party->slug = Str::uuid()->toString();
         $party->no_luck_label = 'ไม่มีตังค์ค่ะ';
+        $party->datetime_start = now();
         $party->save();
 
         $group = $party->participantGroups()->create([
@@ -78,6 +79,7 @@ class DatabaseSeeder extends Seeder
         $party->title = 'new year party!!';
         $party->slug = Str::uuid()->toString();
         $party->no_luck_label = 'ไม่มีตังค์ครับ';
+        $party->datetime_start = now();
         $party->save();
 
         $group = $party->participantGroups()->create([
@@ -117,6 +119,7 @@ class DatabaseSeeder extends Seeder
         $party->title = 'sim';
         $party->slug = Str::uuid()->toString();
         $party->no_luck_label = '300 บาท';
+        $party->datetime_start = now();
         $party->save();
 
         $group = $party->participantGroups()->create([
@@ -172,6 +175,7 @@ class DatabaseSeeder extends Seeder
         $party->title = 'sim รวม';
         $party->slug = Str::uuid()->toString();
         $party->no_luck_label = '300 บาท';
+        $party->datetime_start = now();
         $party->save();
 
         $group = $party->participantGroups()->create([
