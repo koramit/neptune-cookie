@@ -62,7 +62,7 @@
                 <button
                     class="text-6xl text-center block w-full disabled:opacity-50"
                     v-if="!isDrewLabel(number)"
-                    :disabled="!giftEvent.can.draw || form.processing"
+                    :disabled="!giftEvent.can.draw || form.processing || !giftEvent.can.start"
                     @click="draw(number)"
                 >
                     <span
